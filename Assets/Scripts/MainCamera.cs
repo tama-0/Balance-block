@@ -5,7 +5,7 @@ using UnityEngine;
 public class MainCamera : MonoBehaviour
 {
 	public GameObject player;
-	public float hight = 5.0f;
+	public float height = 5.0f;
 	public float pos = -6.5f;
 
 	void Start()
@@ -16,7 +16,7 @@ public class MainCamera : MonoBehaviour
 
 	void Update()
 	{
-		Vector3 playerpos = this.player.transform.position;
-		transform.position = new Vector3(playerpos.x, playerpos.y + hight, playerpos.z + pos);
+        Vector3 playerpos = player.transform.position;
+        transform.position = new Vector3(playerpos.x, playerpos.y + height, playerpos.z + pos);
 	}
 }
