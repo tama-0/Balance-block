@@ -5,9 +5,17 @@ using UnityEngine;
 
 public class playerController: MonoBehaviour
 {
-    public double speed = 20.0;
-    public double limit = 30.0;
+    public float speed = 15.0f;
+    public float limit = 10.0f;
     public Rigidbody rigid;
+
+    Vector2 SquareToCircle(Vector2 input)
+    {
+        Vector2 output;
+        output.x = input.x * Mathf.Sqrt(1 - (input.y * input.y) / 2.0f);
+        output.y = input.y * Mathf.Sqrt(1 - (input.x * input.x) / 2.0f);
+        return output;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -18,18 +26,22 @@ public class playerController: MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        double x = Input.GetAxis("Horizontal") * speed;
-        double z = Input.GetAxis("Vertical") * speed;
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+        float rad = Vector2.Angle(Vector2.right, new Vector2(x,z)) * Mathf.Deg2Rad;
+        float r = Mathf.Sqrt(x * x + z * z) * (0.7071f + 0.2928f * Mathf.Abs(Mathf.Cos(2 * rad)));
         if (Input.anyKey)
         {
-            double theta = -(Math.PI - Math.Atan2(x, z)) * (180 / Math.PI);
+            double theta = -(Mathf.PI - Mathf.Atan2(x, z)) * (180 / Mathf.PI);
             rigid.rotation = Quaternion.AngleAxis((float)theta, Vector3.up);
         }
-        if (rigid.velocity.magnitude >= limit)
+        x = r * Mathf.Cos(rad) * speed;
+        z = z >= 0 ? r * Mathf.Sin(rad) * speed : -r * Mathf.Sin(rad) * speed;
+        if (r*speed > limit)
         {
-            x = 0;
-            z = 0;
+            x = Mathf.Cos(rad) * limit;
+            z = z >= 0 ? Mathf.Sin(rad) * limit : -Mathf.Sin(rad) * limit;
         }
-        rigid.AddForce((float)x, 0, (float)z);
+        rigid.AddForce(x, 0, z);
     }
 }
